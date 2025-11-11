@@ -1,0 +1,4 @@
+💡 Hex 편집기란?
+파일의 내용을 바이트 단위로 16진수로 보여주는 도구 = ex. HxD
+Offset      Hexadecimal             ASCII
+00000000    4D 5A 90 00 ...         MZ....

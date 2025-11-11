@@ -1,0 +1,74 @@
+🧭 마운트란?
+마운트(mount)는 저장 장치나 파일 시스템을 현재 시스템에 연결해서 사용할 수 있게 만드는 과정이야.
+즉, USB, 하드디스크, 외부 드라이브 같은 걸 내 컴퓨터의 폴더처럼 접근 가능하게 만드는 작업이야.
+
+🧠 WSL2 vs VMware Ubuntu — 핵심 비교
+항목:	        WSL2 (Windows Subsystem for Linux)	             VMware Ubuntu (가상머신)
+설치 위치:    	윈도우 내부에 리눅스 커널 통합            |  	   완전한 가상 컴퓨터 위에 리눅스 설치
+파일 접근:	    /mnt/c 등으로 윈도우 파일 자동 마운트됨	  |        공유 폴더 설정해야 윈도우 파일 접근 가능
+마운트 방식:	자동 마운트 (/mnt/c, /mnt/d 등)	         |        수동 마운트 또는 VMware Tools 필요
+성능:	        빠름 (호스트와 직접 통신)	             |        느릴 수 있음 (가상화 오버헤드)
+리눅스 완성도:	일부 기능 제한 (예: systemd, GUI)	     |        완전한 리눅스 환경 제공
+네트워크:	    윈도우와 거의 동일한 IP 공유	         |        별도 가상 네트워크 사용 (NAT, 브리지 등)
+GUI 지원:	    WSLg로 GUI 가능 (WSL2 한정)             |	     기본적으로 GUI 포함
+권한/보안:      윈도우와 공유됨 (보안 제한 있음)	     |        독립된 시스템으로 보안 격리 가능
+
+🔍 WSL2의 자동 마운트 특징
+-/mnt/c, /mnt/d 등으로 윈도우 드라이브가 자동 연결됨
+-wsl.conf 설정으로 마운트 방식 제어 가능
+-파일 시스템은 9p 프로토콜 기반으로 느릴 수 있음
+-윈도우에서 만든 파일은 실행 권한이 없을 수 있음 → chmod +x 필요
+
+🧩 VMware Ubuntu의 마운트 방식
+-윈도우 파일 접근하려면 공유 폴더 설정 필요
+-vmhgfs-fuse나 open-vm-tools 설치해야 /mnt/hgfs로 접근 가능
+-자동 마운트는 안 되고 수동 설정 필요
+
+
+*현재 윈도우11 위 가상 리눅스 WSL2를 사용하고 있다
+
+WSL은 Windows 파일을 9p/DrvFs 프로토콜로 노출하므로 ntfs-3g로 직접 마운트된 게 아님.
+예: C:\Users\kswkm\Desktop\file.txt → WSL에서는 /mnt/c/Users/kswkm/Desktop/file.txt.(따라서 mount에 type 9p로 나타남.)
+읽기/쓰기: 기본적으로 읽기/쓰기 가능. 소유자(uid)/그룹(gid)와 퍼미션은 WSL이 가상으로 매핑해서 보여줌.
+
+
+⚙️ 2. 기본 명령 구조
+sudo mount [옵션] <장치> <마운트할_폴더>
+예: sudo mount /dev/sdb1 /mnt/usb
+→ /dev/sdb1 장치를 /mnt/usb 폴더에 연결함.
+
+연결 해제는 umount로 함: sudo umount /mnt/usb
+
+
+🧩 1. 윈도우에 있는 test-program 파일을 WSL2에서 접근하고 싶을 때
+이 경우엔 마운트가 이미 자동으로 되어 있어, 그냥 경로만 잘 찾으면 돼!
+
+✅ 접근 방법
+윈도우의 C 드라이브에 있다면:
+
+bash
+cd /mnt/c/Users/정은/Desktop/test-program
+/mnt/c는 윈도우의 C: 드라이브
+
+test-program이 폴더인지 파일인지에 따라 경로를 조정해야 해
+
+🔍 확인 명령어
+bash
+ls /mnt/c/Users/정은/Desktop
+→ test-program이 보이면 접근 가능
+
+🧩 2. test-program이 ISO, 디스크 이미지, 외장 드라이브일 경우
+이 경우엔 WSL2에서 직접 마운트는 제한적이야. 대신 PowerShell에서 wsl --mount 명령을 써야 해.
+
+⚙️ PowerShell에서 마운트 예시
+powershell
+wsl --mount \\.\PHYSICALDRIVE2 --partition 1 --type ext4
+→ 마운트 후 WSL2에서 /mnt/wsl/ 경로로 접근 가능
+
+
+-윈도우 파일 접근:	/mnt/c/... 경로로 접근 (자동 마운트됨)
+-디스크/이미지 마운트:	wsl --mount 명령 사용 (PowerShell에서 실행)
+즉, test-program이 윈도우에 있는 일반 파일이라면 이미 마운트된 상태고, 디스크나 이미지라면 PowerShell에서 수동 마운트해야 해.
+
+
+

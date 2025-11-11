@@ -1,0 +1,18 @@
+-Windows 은 NTFS, FAT32 을 지원하고, 
+-Ubuntu 20.04 기준으로 EXT4, FAT32, NTFS 까지 지원하기 때문에 
+
+<윈도우와 윈도우 위의 우분투 간 파일 공유 방법>
+-Ubuntu 에서 Windows NTFS / FAT32 파일 시스템 사용
+-Windows 10 에서 EXT4 파일 시스템 사용
+
+https://kibua20.tistory.com/6
+
+※ntfs-3g 는 Ubuntu20.04 에서는 기본으로 설치되어 있으며 만일 auto 명령어가 동작하지 않는다면 ntfs-3g를 먼저 설치 (sudo apt install ntfs-3g) 후 아래 과정을 진행해야 한다. 
+
+Ubuntu 20.04 에서 NTFS 디스크는 기본적으로 Read Only 로 마운트한다.  따라서 NTFS 로 포맷된 디스크를 우분투에서 사용해야 하는 경우  마운트 옵션을 Read/Write으로 변경해야 한다. 
+터미널에서도 옵션 변경이 가능하지만 아래와 같이 '디스크' 프로그램을 사용해서 보다 쉽게 RW 옵션으로 변경할 수 있다.
+
+
+
+
+

@@ -1,0 +1,235 @@
+~$ docker images
+REPOSITORY                     TAG       IMAGE ID       CREATED       SIZE
+<none>                         <none>    d8187eeb37c1   3 days ago    280MB
+dreamhackofficial/blue-whale   1         6bcfd56d243a   2 years ago   237MB
+
+
+~$ dive 6bcfd56d243a
+Image Source: docker://6bcfd56d243a
+Fetching image... (this can take a while for large images)
+cannot fetch image
+could not find image config
+-> 오류 출력됨
+
+<⚠️ Dive 오류 원인>
+1. 이미지가 Docker Hub에서 내려받은 원격 이미지라서, 로컬 메타데이터(config)가 누락되어 있을 수 있음
+일부 오래된 Docker 버전에서 pull한 이미지는 “image config”가 누락된 상태로 저장되기도 합니다.
+→ dive는 내부 파일구조(manifest, config.json)가 있어야 분석이 가능한데,
+오래된 레이어만 남아있으면 오류가 납니다.
+
+2. Docker permission 문제 (root / 일반 사용자 차이)
+root로 이미지를 받아놓고 일반 사용자로 dive를 실행하면 접근 권한이 없을 수도 있어요.
+예: sudo dive 6bcfd56d243a
+
+3. dive 버전 문제
+dive가 너무 오래되었거나 Docker 버전과 호환되지 않으면
+config 파일을 읽지 못합니다.
+
+4. 꽤 흔한 **“dive + WSL2 환경 문제”**
+헐... Docker 이미지가 실제로는 잘 존재하지만, dive가 Docker 데몬(엔진)에 접근을 못하는 상태입니다.
+
+*ID보다 이미지 이름과 태그를 사용하는 것이 더 안전하다: dive dreamhackofficial/blue-whale:1
+
+= 다 아니였다.....
+
+
+
+<--정답-->
+docker run --rm -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  wagoodman/dive:latest dreamhackofficial/blue-whale:1
+
+= Image Source: docker://dreamhackofficial/blue-whale:1
+Extracting image from docker-engine... (this can take a while for large images)
+Analyzing image...
+Building cache...
+
+Ctrl+P then Ctrl+Q (순서대로)
+(이렇게 하면 컨테이너는 계속 실행되고, 너는 호스트 쉘로 돌아옵니다.)
+
+Ctrl+C = ^C -> home으로 나감
+---------------------------------------------------------------------------------------------------------------
+
+docker run: 컨테이너를 실행하라는 명령
+--rm: 컨테이너가 종료되면 자동으로 삭제합니다. 임시 분석용 컨테이너를 만들 때 자주 씁니다.
+it:
+-i : 표준 입력(STDIN)을 활성화
+-t : 터미널(TTY)을 할당
+→ 즉, 대화형 터미널로 컨테이너에 들어가서 바로 사용할 수 있게 합니다.
+-v /var/run/docker.sock:/var/run/docker.sock: 호스트의 Docker 데몬 소켓을 컨테이너에 연결합니다.
+,이렇게 하면 컨테이너 안에서 호스트 Docker를 직접 사용할 수 있습니다.
+,Dive가 이미지를 분석할 때 Docker API를 직접 접근하기 때문에 필요합니다.
+
+= 핵심은 Docker 소켓 접근 문제 때문이다.
+그냥 dive dreamhackofficial/blue-whale:1 했을 때
+기본적으로 dive는 Docker API를 통해 이미지를 가져오거나 레이어 정보를 읽습니다.
+로컬에서 Dive를 설치해서 실행하면, Docker 데몬과 통신해야 하는데, Linux에서는 보통 권한 문제가 생기거나
+Docker 소켓(/var/run/docker.sock)에 접근 권한이 없으면 → Dive가 이미지를 읽지 못하고 에러가 납니다.
+
+
+🔑 핵심 요약
+-문제: 로컬 Dive는 Docker API 접근 권한 부족 → 이미지 읽기 실패
+-해결: 컨테이너 Dive + Docker 소켓 마운트 → 권한 문제 해결, 이미지 접근 가능
+
+
+Docker 데몬(Docker Daemon, dockerd)
+Docker의 핵심 백그라운드 서비스입니다.
+-컨테이너를 만들고, 실행하고, 관리
+-이미지 다운로드, 레이어 관리
+-네트워크/볼륨 관리
+= 쉽게 말하면 **“Docker를 실제로 작동시키는 서버 프로그램”**이라고 보면 돼요.
+Linux에서는 보통 systemctl status docker로 데몬 상태를 확인 가능
+
+Docker 클라이언트와 데몬
+docker run ... 같은 명령은 클라이언트에서 입력
+Docker 클라이언트는 데몬에게 요청을 전달해서 실제 작업 수행
+예시: docker ps
+→ 클라이언트가 데몬에 “현재 실행 중인 컨테이너 보여줘” 요청
+
+Docker 데몬(dockerd) = Docker의 “엔진”
+→ 컨테이너 실행, 이미지 관리 등 실제 일을 함
+
+Docker CLI(docker) = 명령어 도구
+→ 우리가 docker run, docker ps 같은 명령으로 데몬에 요청
+
+
+Docker 소켓(/var/run/docker.sock)
+데몬과 클라이언트가 통신하는 통로입니다.
+-UNIX 소켓 파일 (/var/run/docker.sock) 형태
+-권한이 없으면 접근 불가
+= 쉽게 말하면 데몬과 클라이언트가 주고받는 메시지를 전달하는 파이프 같은 것
+
+Dive와 Docker 소켓
+Dive는 이미지를 분석하려면 데몬이 가진 이미지 정보에 접근해야 함
+근데 로컬에서 Dive를 실행하면 권한 문제로 접근 실패 → 분석 불가
+그래서 컨테이너 Dive를 쓰면서: -v /var/run/docker.sock:/var/run/docker.sock
+→ 호스트의 Docker 소켓을 그대로 연결
+→ 컨테이너 안 Dive가 데몬과 통신 가능 → 정상 동작
+
+Docker Desktop 설치 = Docker 데몬이 같이 설치되는 것
+즉, 별개가 아니라 Docker Desktop 안에 데몬이 포함되어 있습니다.
+
+
+cannot fetch image
+could not find 'blobs/sha256/72d2dc9f485f68e8e371d3ae37a168190b1c57ecd4d378ef4c65d285ff4e24e5' in parsed layers
+→ 이건 Dive가 이미지 레이어/메타데이터를 읽는 과정에서 실패했다는 의미입니다.
+즉, 문제가 Dive 자체가 로컬 Docker Desktop WSL 환경에서 이미지를 직접 읽지 못하는 구조적 호환 문제라는 겁니다.
+WSL + Docker Desktop 환경에서 apt 설치 dive가 로컬 이미지를 읽으려 하면 이미지 config/layer 접근 실패가 자주 발생합니다.
+단순 권한/경로 문제가 아니라, Dive가 Docker Engine API로 이미지 메타데이터를 불러오는 방식의 한계예요.
+
+
+
+
+이미지 export 후 Dive 분석 (대체 방법)
+docker save dreamhackofficial/blue-whale:1 -o blue-whale.tar
+dive blue-whale.tar
+Docker 데몬을 통하지 않고 이미지 파일 직접 분석
+WSL/권한 문제 완전히 무시 가능
+다만 tar 파일을 만들어야 하는 수고가 있음
+
+
+dive tar:blue-whale.tar라고 입력하면 Dive 0.12.0 (apt로 설치한 버전)은 tar 파일 직접 분석 모드를 지원하지 않고, 무조건 Docker 데몬을 통해 fetch하려고 시도합니다.
+= 로컬 tar 파일을 그냥 분석하는 기능은 이 버전에서는 작동하지 않아요.
+tar: 접두사도 인식 못 하고
+Docker 데몬에게 pull을 시도 → 실패
+그래서 "pull access denied for tar" 에러 발생
+
+= 이것도 실패
+📌 확인된 정보
+공식 GitHub README 문서에서
+
+“With the --source option, you can select where to fetch the container image from: … docker‑archive: A Docker Tar Archive from disk” 라는 문구가 있다. 
+릴리스 노트 중 버전 v0.12.0 에서 “Fix layer selection to select only one layer at a time …” 등 여러 버그 수정이 언급돼 있으며, “Image config” 관련 버그 수정도 포함되어 있다. 
+또한 이슈 트래커에서 오래된 tar/이미지 아카이브 모드가 “could not find image config” 등의 오류를 일으켰다는 보고가 있습니다.
+
+🧐 결론
+정확히 “tar 모드 지원이 시작된 버전”을 말하기는 어렵지만 다음과 같이 정리할 수 있어요:
+tar/archive 모드는 README 상에서 적어져 있으므로 초기 버전부터 제한적이나마 가능성 있음
+하지만 WSL 환경이나 이미지 구성(config) 관련 환경에서는 제대로 동작하지 않는 버그가 있었고,
+v0.12.0 에서 이미지 fetch/구성(config) 관련 버그들이 개선된 것으로 보입니다.
+따라서 “tar 파일 직접 분석이 실용적으로 안정 동작하는 버전”은 v0.12.0 이후일 가능성이 높습니다.
+
+
+
+
+
+
+
+
+
+
+<전체 결론>
+1️⃣ WSL 환경에서 Dive 오류가 나는 이유
+#당신의 환경
+Windows 위에 WSL(Ubuntu)
+Docker Desktop 설치, WSL 통합 사용
+Dive apt 설치 또는 tar 파일 분석 시 오류 발생
+#이유
+Docker 데몬은 Windows 쪽에 있음
+WSL에서 docker 명령은 Windows Docker Desktop 데몬과 통신
+즉, /var/run/docker.sock는 Windows ↔ WSL 소켓 브리지를 통해 연결
+Dive는 이 소켓을 통해 이미지 config, 레이어 metadata를 요청
+WSL ↔ Windows 소켓 간 호환 문제, 권한 문제, path 변환 문제로 읽기 실패
+#로컬 tar 분석 문제
+Dive 0.12.0에서는 tar 분석 모드가 제한적이고, WSL에서 docker-archive/tar 경로 인식 문제 존재
+WSL 환경에서는 tar: 접두사를 붙여도 내부적으로 Docker API 호출을 시도 → 실패
+#apt 설치 Dive의 한계
+apt 버전(0.12.0)은 WSL + Windows Docker Desktop 구조에서 이미지 config 읽기와 관련된 버그 존재
+
+
+2️⃣ Linux 환경과 차이점
+만약 당신이 리눅스 호스트 운영체제를 썼다면:
+Docker 데몬과 Dive가 같은 OS, 같은 파일 시스템, 같은 소켓을 사용
+/var/run/docker.sock 권한 문제 없이 접근 가능
+tar 파일 분석도 순수 Linux 경로 기준이므로 path 문제 없음
+따라서 대부분 “cannot fetch image / could not find image config” 같은 오류 없이 정상 동작 가능
+
+
+3️⃣ 요약
+Windows + WSL + Docker Desktop:	apt Dive, tar 분석 시 오류 가능성 높음 (권장: docker run 컨테이너 방식)
+Linux 호스트: 동일 이미지, 동일 Dive 버전 → 대부분 문제 없음
+
+
+💡 결론
+오류의 핵심 원인은 WSL ↔ Windows Docker Desktop 소켓 브리지 + apt Dive 버전 제한
+WSL에서 안정적으로 Dive 쓰려면 Docker 컨테이너 방식 사용이 필수
+순수 Linux 환경에서는 이런 제한이 없으므로 apt Dive 그대로도 정상 동작
+
+
+
+
+
+
+#Q. 그럼 내가 현재 내 환경에서 dive 0.12.0 보다 상위 버전을 설치하고 tar을 이용하면 가능할까?
+= 결론부터 말하면, 현재 Windows + WSL + Docker Desktop 환경에서는 상위 버전을 설치하더라도 tar 파일 분석은 거의 확실히 안 됩니다.
+
+1️⃣ WSL 환경에서의 한계
+-WSL은 Windows 위에서 Linux 레이어를 에뮬레이션
+-Docker 데몬은 Windows 쪽 Docker Desktop에 있음
+-Dive가 tar 파일을 읽는 모드는 Docker Engine API를 통해 metadata를 확인하도록 설계되어 있음
+= 따라서 tar 파일을 지정해도, Dive는 내부적으로 Docker 데몬을 참조하려고 시도
+이 과정에서 “pull access denied” 또는 “cannot fetch image” 같은 오류 발생
+즉, Dive 버전 업그레이드만으로는 WSL ↔ Docker Desktop 간 호환 문제를 해결할 수 없음
+
+
+2️⃣ tar 파일 분석이 실제로 되는 조건
+-Dive의 tar 모드가 안정적으로 동작하려면...
+-Linux 호스트 (Docker 데몬과 Dive가 동일 OS)
+-Dive 최신 버전
+-tar 파일 접근 권한 정상
+= 이런 환경이면 tar 파일 분석 가능
+
+
+
+#<화룡점정>
+현재 환경에서는 Docker 컨테이너 방식이 가장 확실함...^^!
+docker run --rm -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  wagoodman/dive:latest dreamhackofficial/blue-whale:1
+
+= 이 방법은 
+-WSL/Windows 경계 문제 회피
+-로컬 이미지 분석 가능
+-최신 Dive 버전 사용 가능
+
+

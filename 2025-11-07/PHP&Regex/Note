@@ -1,0 +1,34 @@
+if (preg_match("/[a-zA-Z]/", $input_pw)) {
+              echo "alphabet in the pw :(";
+            }
+            else{
+              $name = preg_replace("/nyang/i", "", $input_name);
+              $pw = preg_replace("/\d*\@\d{2,3}(31)+[^0-8\"]\!/", "d4y0r50ng", $input_pw);
+              
+              if ($name === "dnyang0310" && $pw === "d4y0r50ng+1+13") {
+                echo '<h4>Step 2 : Almost done...</h4><div class="door_box"><div class="door_black"></div><div class="door"><div class="door_cir"></div></div></div>';
+1. pw에 알파벳 넣으면 무조건 틀림
+2. name에 nyang 보이면 다 제거할 거임
+3. pw에 /\d*\@\d{2,3}(31)+[^0-8\"]\!/ 이 조건에 만족되면 d4y0r50ng이렇게 바꿀 거임
+4. name은 dnyang0310으로 인식되어야 하고, pw는 d4y0r50ng+1+13로 인식되어야 함
+
+만족하는 name = dnnyangyang0310
+만족하는 pw = 0@12319!+1+13
+
+DreamHack에 문제에 플래그는 ../dream/flag.txt에 위치합니다. 라고 적혀있다
+
+ else if (preg_match("/flag/i", $cmd)) {
+                  echo "<pre>Error!</pre>";
+                }
+                else{
+                  echo "<pre>--Output--\n";
+                  system($cmd);
+                  echo "</pre>";
+
+여길 보면
+1. flag가 직접적으로 언급되면 오류난다
+2. 리눅스 명령어 실행됨
+
+cat 명령어를 통해 ../dream/flag.txt에 있는 파일을 와일드카드를 이용해 ../dream/fl*g.txt 를 읽어온다
+
+= DH{ad866c64dabaf30136e22d3de2980d24c4da617b9d706f81d10a1bc97d0ab6f6}
