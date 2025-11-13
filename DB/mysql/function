@@ -1,0 +1,224 @@
+#문자열 연결 함수: CONCAT, CONCAT_WS
+함수	설명	특징 및 예시
+CONCAT	문자열 또는 열을 연결합니다.	CONCAT('I ', 'Love ', 'MySQL')
+CONCAT_WS	구분자(Separator)를 사용하여 여러 문자열을 연결합니다.	첫 번째 인수로 구분자를 정의합니다. CONCAT_WS(', ', first_name, last_name, email)
+NULL 처리	CONCAT 함수는 인수에 NULL이 포함되면 결과는 **NULL**이 됩니다.	CONCAT(NULL, first_name, last_name) → NULL
+NULL 처리	CONCAT_WS 함수는 구분자 뒤에 오는 NULL 인수를 무시합니다.	CONCAT_WS(', ', first_name, NULL, last_name) → first_name, last_name (NULL 제외)
+
+
+#데이터 형변환 함수: CAST, CONVERT
+사용자가 임의로 데이터 타입을 변환하는 것을 명시적 형변환이라고 하며, CAST와 CONVERT 함수를 사용합니다.
+CAST 기본 형식:
+SELECT CAST(열 AS 데이터유형) FROM 테이블;
+CONVERT 기본 형식:
+SELECT CONVERT(열, 데이터유형) FROM 테이블;
+특징:
+CONVERT 함수는 CAST와 달리 문자열 집합을 다른 문자열 집합으로 변환할 수 있습니다.
+오버플로 방지: BIGINT 범위를 초과하는 연산 시, CAST(값 AS UNSIGNED)를 사용하여 오버플로를 방지할 수 있습니다.
+사용 가능한 데이터 유형: BINARY, CHAR, DATE, DATETIME, TIME, DECIMAL, JSON, NCHAR, SIGNED[INTEGER], UNSIGNED[INTEGER]
+
+
+#NULL 대체 함수: IFNULL, COALESCE
+NULL 값 때문에 예기치 못한 결과가 발생하는 것을 방지하기 위해 NULL을 다른 값으로 치환합니다.
+함수	기본 형식	설명
+IFNULL	IFNULL(열, 대체할값)	해당 열의 NULL 값을 지정된 값 또는 다른 열의 값으로 대체합니다.
+COALESCE	COALESCE(열1, 열2, ...)	인수로 나열된 열 중에서 NULL이 아닌 첫 번째 값을 반환합니다. 모든 인수가 NULL이면 NULL을 반환합니다.
+
+
+#대소문자 변경 함수: LOWER, UPPER
+LOWER(문자열): 대문자를 소문자로 변경합니다.
+UPPER(문자열): 소문자를 대문자로 변경합니다.
+
+
+#공백 제거 함수: LTRIM, RTRIM, TRIM
+함수	설명
+LTRIM	문자열의 왼쪽(앞) 공백을 제거합니다.
+RTRIM	문자열의 오른쪽(뒤) 공백을 제거합니다.
+TRIM	문자열의 양쪽 공백을 모두 제거합니다.
+TRIM 확장	TRIM(BOTH '제거할문자' FROM 문자열): 문자열 양 끝의 특정 문자를 제거합니다.
+
+
+#문자열 크기 및 개수 함수: LENGTH, CHAR_LENGTH, POSITION
+함수	설명
+LENGTH	문자열의 바이트 크기를 반환합니다. (한글/한자/특수문자는 3바이트)
+CHAR_LENGTH	문자열의 문자 개수를 반환합니다.
+POSITION	지정한 문자가 탐색 대상 문자열에서 처음 나타나는 위치(문자열 길이)를 반환합니다. (없으면 0 반환)
+
+
+#문자열 추출 함수: LEFT, RIGHT, SUBSTRING
+함수	기본 형식	설명
+LEFT	LEFT(문자열, 길이)	문자열의 왼쪽부터 지정한 길이만큼 반환합니다.
+RIGHT	RIGHT(문자열, 길이)	문자열의 오른쪽부터 지정한 길이만큼 반환합니다.
+SUBSTRING	SUBSTRING(문자열, 시작위치, 개수)	지정한 시작 위치부터 지정한 개수만큼의 문자열을 반환합니다.
+
+
+#문자열 치환 및 반복 함수
+함수	기본 형식	설명
+REPLACE	REPLACE(문자열, 찾을문자, 대체할문자)	지정한 문자를 다른 문자로 대체합니다.
+REPEAT	REPEAT(문자, 반복횟수)	지정한 문자를 반복 횟수만큼 반복하여 출력합니다.
+SPACE	SPACE(개수)	지정한 개수만큼 공백 문자열을 생성합니다. (CONCAT과 함께 유용하게 사용됨)
+REVERSE	REVERSE(문자열)	문자열을 역순으로 출력합니다. (IP 대역 등을 구할 때 활용 가능)
+
+
+#문자열 비교 함수: STRCMP
+STRCMP(문자열1, 문자열2): 두 문자열을 비교합니다.
+동일할 경우 0 반환
+다를 경우 -1 반환
+
+
+#날짜 함수
+날짜 및 시간 데이터를 활용한 작업을 수행하며, 특정 조건에 따른 데이터 검색에 유용합니다.
+
+
+#현재 날짜 및 시간 반환 함수
+함수	설명	정밀도 지정 (N)
+CURRENT_DATE()	현재 날짜 (연, 월, 일)	-
+CURRENT_TIME()	현재 시간 (시, 분, 초)	CURRENT_TIME(N)
+CURRENT_TIMESTAMP()	현재 날짜 및 시간	CURRENT_TIMESTAMP(N)
+NOW()	현재 날짜 및 시간	NOW(N)
+UTC_DATE()	세계 표준 시간 (UTC) 날짜	-
+UTC_TIME()	UTC 시간	UTC_TIME(N)
+UTC_TIMESTAMP()	UTC 날짜 및 시간	UTC_TIMESTAMP(N)
+N은 1부터 6까지의 정밀도 (밀리초, 마이크로초 등)를 지정할 수 있습니다.
+
+
+#날짜 연산 함수: DATE_ADD, DATE_SUB
+함수	기본 형식	설명
+DATE_ADD	DATE_ADD(날짜, INTERVAL 숫자 단위)	날짜에 지정된 시간 단위를 더합니다. (뺄셈은 숫자에 음수 -를 사용)
+DATE_SUB	DATE_SUB(날짜, INTERVAL 숫자 단위)	날짜에 지정된 시간 단위를 뺍니다. (숫자를 양수로 입력)
+단위 (UNIT) 예시: YEAR, MONTH, DAY, HOUR, MINUTE, SECOND
+
+
+#날짜 차이 계산 함수: DATEDIFF, TIMESTAMPDIFF
+함수	기본 형식	설명
+DATEDIFF	DATEDIFF(종료날짜, 시작날짜)	두 날짜 간의 차이를 **일수(Days)**로 반환합니다.
+TIMESTAMPDIFF	TIMESTAMPDIFF(단위, 시작날짜, 종료날짜)	두 날짜 간의 차이를 지정된 단위 (YEAR, MONTH, HOUR 등)로 반환합니다.
+
+
+#날짜 정보 추출 함수
+DAYNAME(날짜): 지정된 날짜의 요일을 반환합니다.
+YEAR(날짜): 날짜에서 년 값을 가져옵니다.
+MONTH(날짜): 날짜에서 월 값을 가져옵니다.
+WEEK(날짜): 해당 날짜가 몇 번째 주에 해당하는지를 반환합니다.
+DAY(날짜): 날짜에서 일 값을 가져옵니다.
+
+
+#날짜 형식 변환 함수: DATE_FORMAT, GET_FORMAT
+DATE_FORMAT(날짜, 형식): 날짜를 지정한 형식 문자열 (%Y, %m, %d 등)에 따라 변환합니다.
+SELECT DATE_FORMAT('2023-08-20 20:23:01', '%m/%d/%Y');
+GET_FORMAT(DATE, 지역): 특정 국가나 지역별 표준 날짜 형식을 알려줍니다.
+지역 예시: USA, JIS, EUR, ISO, INTERNAL
+
+
+#집계 함수
+데이터 그룹에 대한 통계 값을 계산하는 함수입니다.
+
+
+#개수 계산 함수: COUNT
+COUNT(*): 테이블의 전체 행 개수를 집계합니다.
+COUNT(열): 지정된 열의 NULL 값을 제외한 행 개수를 집계합니다.
+COUNT(DISTINCT 열): 지정된 열에서 중복된 값을 제외한 데이터 개수를 집계합니다.
+GROUP BY와 조합: GROUP BY 절을 사용하여 그룹별로 데이터 개수를 계산할 수 있습니다.
+
+
+#합계, 평균, 최솟값/최댓값 함수
+함수	기본 형식	설명
+SUM	SUM(열)	지정된 열의 숫자 데이터를 모두 합산합니다. (MySQL에서는 오버플로 시 암시적 형변환을 수행함)
+AVG	AVG(열)	지정된 열의 숫자 데이터의 평균을 계산합니다.
+MIN	MIN(열)	지정된 열의 최솟값을 조회합니다.
+MAX	MAX(열)	지정된 열의 최댓값을 조회합니다.
+
+
+#부분합 및 총합 계산 함수: ROLLUP
+GROUP BY 열 WITH ROLLUP: GROUP BY에 지정된 열을 기준으로 오른쪽에서 왼쪽으로 이동하며 부분합과 최종 총합을 계산합니다.
+총합 행은 GROUP BY 열에 NULL이 표시됩니다.
+계층화된 합계를 보려면 열 순서가 중요합니다.
+
+
+#표준편차 계산 함수
+STDDEV(열): 모집단(모든 값)에 대한 표준편차를 구합니다.
+STDDEV_SAMP(열): 표본에 대한 표준편차를 구합니다.
+
+
+#수학 함수
+다양한 수학적 계산을 수행하는 함수입니다.
+
+
+#절댓값 및 부호 판단 함수
+ABS(숫자/수식): 절댓값을 반환합니다. (음수 → 양수, 양수/0 → 변화 없음)
+ABS(-2147483648)와 같은 오버플로 값도 MySQL에서는 BIGINT로 암시적 형변환되어 반환됩니다.
+SIGN(숫자/수식): 값이 양수, 음수, 0인지를 판단하여 각각 1, -1, 0을 반환합니다.
+
+
+#천장값, 바닥값, 반올림 함수
+함수	기본 형식	설명
+CEILING	CEILING(숫자)	천장값 (입력 숫자보다 크거나 같은 최소 정수)을 반환합니다. (예: 2.4 → 3)
+FLOOR	FLOOR(숫자)	바닥값 (입력 숫자보다 작거나 같은 최대 정수)을 반환합니다. (예: 2.4 → 2)
+ROUND	ROUND(숫자, 자릿수)	지정된 자릿수에서 반올림하여 반환합니다.
+자릿수: 양수(소수점 이하), 음수(정수 부분)를 지정할 수 있습니다.
+팁: 정수부 길이보다 큰 음수 자릿수를 입력하면 0을 반환합니다. (예: ROUND(748.58, -4) → 0)
+
+
+#로그 및 지수 함수 (결과: float)
+함수	기본 형식	설명
+LOG	LOG(숫자, 밑)	지정된 밑의 로그값을 구합니다. (밑 생략 시 자연로그이며 기본값 e 설정)
+EXP	EXP(지수)	en의 값을 반환합니다. (LOG의 역함수 관계)
+POWER	POWER(밑, 지수)	거듭제곱 값을 구합니다. (밑^지수)
+SQRT	SQRT(숫자)	제곱근을 반환합니다. (양수 값 입력 필수, 음수 입력 시 → NULL)
+로그와 지수 관계: EXP(LOG(x))≈xEXP(LOG(x))≈x
+
+
+#난수 생성 함수: RAND
+RAND(인자): 0부터 1 사이의 실수형 난수를 반환합니다.
+인자 지정 시: 같은 인자를 설정하면 같은 결과를 반환합니다. (난수 종류 결정)
+인자 미지정 시: 실행할 때마다 다른 난수를 반환합니다.
+활용 예: 1부터 100 사이 난수: FLOOR(RAND() * 100) + 1
+
+
+#삼각 함수
+COS(숫자/식): 코사인 값을 계산합니다.
+SIN(숫자/식): 사인 값을 계산합니다.
+TAN(숫자/식): 탄젠트 값을 계산합니다.
+ATAN(숫자/식): 아크탄젠트 값을 계산합니다.
+
+
+#순위 함수
+조회 결과에 순위를 부여하는 함수입니다. OVER 절을 사용하여 정렬 및 파티션 조건을 지정합니다.
+
+
+#순위 함수 기본 형식
+RANK 함수()OVER([PARTITION BY 열]ORDER BY 열)
+함수	특징	공동 순위 처리 방법
+ROW_NUMBER	모든 행에 유일한 값으로 순위를 부여합니다.	공동 순위가 있어도 정렬 순서에 따라 순위를 다르게 부여합니다.
+RANK	공동 순위가 있으면 같은 순위를 부여하고, 그 다음 순위는 공동 순위 수만큼 건너뛰어 부여합니다. (예: 1, 2, 2, 4위)	
+DENSE_RANK	공동 순위가 있으면 같은 순위를 부여하고, 그 다음 순위는 건너뛰지 않고 연속적으로 부여합니다. (예: 1, 2, 2, 3위)	
+NTILE(정수)	데이터를 인자로 지정한 개수(N)만큼 균등하게 그룹화하고 각 그룹에 순위를 부여합니다. (1부터 N까지)	각 행이 속한 그룹의 순위가 됩니다. (예: NTILE(100) → 백분위 그룹)
+PARTITION BY: 그룹별로 순위를 부여할 때 사용합니다.
+
+
+#분석 함수
+데이터 그룹을 기반으로 앞뒤 행 계산, 누적 분포, 상대 순위 등을 계산합니다. 집계 함수와 달리 그룹마다 여러 행을 반환할 수 있습니다.
+
+
+#앞/뒤 행 참조 함수: LAG, LEAD
+SELF JOIN 없이 전후 행 데이터를 참조하여 비교 및 연산할 때 사용합니다.
+LAG(열이름, 참조위치): 현재 행에서 앞의 행을 참조합니다. (참조위치 기본값: 1)
+LEAD(열이름, 참조위치): 현재 행에서 뒤의 행을 참조합니다. (참조위치 기본값: 1)
+LAG/LEAD 기본 형식: LAG(또는 LEAD)(열이름,참조위치)OVER([PARTITION BY 열]ORDER BY 열)
+
+
+#누적 분포 및 상대 순위 계산 함수
+함수	기본 형식	반환 범위	설명
+CUME_DIST	CUME_DIST() OVER(ORDER BY 열)	0 초과 ~ 1 이하	그룹 내에서 데이터 값이 포함되는 위치의 누적 분포를 계산합니다. (NULL은 가장 낮은 값으로 취급)
+PERCENT_RANK	PERCENT_RANK() OVER(ORDER BY 열)	0 초과 ~ 1 이하	그룹 내의 상대 순위를 계산합니다. (첫 번째 행은 0부터 시작)
+
+
+#첫 행 또는 마지막 행의 값 구하는 함수
+FIRST_VALUE(열): 그룹에서 정렬된 데이터의 첫 번째 행의 값을 반환합니다.
+LAST_VALUE(열): 그룹에서 정렬된 데이터의 마지막 행의 값을 반환합니다.
+LAST_VALUE 주의사항: 정확한 마지막 행을 조회하기 위해서는 윈도우 함수 범위 지정이 필요합니다.
+LAST_VALUE(x.amount) OVER(ORDER BY x.payment_date 
+RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+UNBOUNDED PRECEDING: 현재 파티션의 첫 행
+UNBOUNDED FOLLOWING: 현재 파티션의 마지막 행
+
