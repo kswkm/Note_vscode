@@ -1,0 +1,39 @@
+/*
+🔗 내부 조인 (INNER JOIN)
+✅ 정의
+두 테이블에서 공통된 값이 있는 행만 연결해서 보여줍니다.
+조건을 만족하지 않는 행은 제외됩니다.
+🧪 예시
+sql
+SELECT *
+FROM customer AS a
+INNER JOIN address AS b
+ON a.address_id = b.address_id;
+customer와 address 테이블에서 address_id가 같은 행만 조회됨
+
+🔗 외부 조인 (OUTER JOIN)
+✅ 정의
+조건을 만족하지 않아도 한쪽 테이블의 모든 행을 유지하면서 연결합니다.
+조건이 없는 경우에는 NULL로 채워집니다.
+🔄 종류
+종류	설명
+-LEFT OUTER JOIN	왼쪽 테이블의 모든 행 + 오른쪽 테이블의 일치하는 행
+-RIGHT OUTER JOIN	오른쪽 테이블의 모든 행 + 왼쪽 테이블의 일치하는 행
+-FULL OUTER JOIN	양쪽 테이블의 모든 행을 연결 (일치하지 않으면 NULL 포함)
+🧪 LEFT JOIN 예시
+sql
+SELECT *
+FROM customer AS a
+LEFT JOIN address AS b
+ON a.address_id = b.address_id;
+customer 테이블의 모든 행을 유지하면서,
+address_id가 일치하는 경우만 address 정보가 채워짐. 일치하지 않으면 b 컬럼은 NULL.
+
+*CROSS JOIN은 두 테이블의 모든 조합을 생성합니다.
+
+SQL 쿼리에서 먼저 등장하는 테이블이 왼쪽, 그 다음이 오른쪽입니다.
+*/
+
+select *from customer
+where customer_id in (select customer_id from customer 
+where first_name in ('ROSA', 'ana'));

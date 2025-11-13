@@ -24,3 +24,52 @@ UDP에는 송신자에게 전송 성공을 알리는 전송 계층 프로세스�
 신뢰성         	있음 (재전송, 순서 보장)	         없음
 용도	         웹, 이메일, 파일 전송	         스트리밍, 게임, DNS 질의
 
+
+
+#netstat(windiws power shell)
+
+활성 연결
+
+  프로토콜  로컬 주소           외부 주소              상태
+  TCP    10.183.218.156:49621   4.213.25.240:https     ESTABLISHED
+  TCP    10.183.218.156:53405   10:ms-do               SYN_SENT
+  TCP    10.183.218.156:53406   10:ms-do               SYN_SENT
+  TCP    10.183.218.156:65314   146.75.114.172:http    ESTABLISHED
+  TCP    127.0.0.1:49677        kubernetes:49678       ESTABLISHED
+  TCP    127.0.0.1:49678        kubernetes:49677       ESTABLISHED
+  TCP    127.0.0.1:49696        kubernetes:49697       ESTABLISHED
+  TCP    127.0.0.1:49697        kubernetes:49696       ESTABLISHED
+  TCP    127.0.0.1:58843        kubernetes:58844       ESTABLISHED
+  TCP    127.0.0.1:58844        kubernetes:58843       ESTABLISHED
+  TCP    127.0.0.1:61007        kubernetes:61008       ESTABLISHED
+  TCP    127.0.0.1:61008        kubernetes:61007       ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:49366  [2607:fcf0:20a4:802:9583:4282:2b95:88be]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:50269  g2600-1410-d000-0291-0000-0000-0000-0b33:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:50630  [64:ff9b::aa48:fae1]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:50636  [2402:2500:20a0:301:2ca5:fe33:7562:e714]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:50762  [2600:1901:0:47fc::]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:50965  server-3-171-185-63:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:51168  [2a06:98c1:3107::6812:2715]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:51950  [2600:9000:276a:c200:14:96fe:1f00:93a1]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:51951  [64:ff9b::142c:e570]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:52909  100:https              ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:53399  ec2-54-201-45-3:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:53404  a23-219-19-250:http    ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:54130  [64:ff9b::aa48:edf1]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:55018  [64:ff9b::aa48:fad4]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:55305  [64:ff9b::aa48:f303]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:56559  ec2-54-163-224-36:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:57996  [64:ff9b::aa48:fa22]:https  ESTABLISHED
+  TCP    [2001:2d8:6a42:7ed9:dc5c:c6a7:f4c4:1d76]:58098  [2600:9000:276a:c200:14:96fe:1f00:93a1]:https  ESTABLISHED
+.
+.
+.
+
+항목	                       블루투스             	 Wi-Fi
+전송 방식	           비-IP (Bluetooth Stack)  	IP 기반 (802.11)
+프로토콜	            RFCOMM, L2CAP, SDP 등	     TCP/IP, UDP/IP
+대표 용도	             오디오, HID, 파일 전송   	인터넷, 네트워크 통신
+netstat 표시 여부           	❌ 안 뜸             	✅ 뜸
+
+
+
