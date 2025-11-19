@@ -1,0 +1,54 @@
+pb      = 주소를 담는 변수(포인터)
+*pb     = 그 주소에 실제 저장된 값 (포인터를 dereference)
+&b      = 변수 b의 주소
+
+모든 변수의 주소는 메모리의 위치이며, 결국 컴퓨터 입장에서는 숫자(메모리 주소값) 이다.
+예) 0x7ffc1234abcd 같은 값.
+그래서 컴퓨터 내부에서는 주소 = 정수와 거의 비슷하게 다뤄진다.
+
+#주소를 %d로 넘기면 무슨 일이 생기나?
+& a → (8 byte 주소)
+printf → 4 byte만 읽음
+→ 나머지 정보는 잘려나감
+
+ip = &a[0]; // ip = a;
+
+
+---------------------------------------------------------------------------------------------------
+#include <stdio.h>
+
+void swap(unsigned char x, unsigned char y);   // 함수 선언
+
+int main() 
+{
+    unsigned char a, b;
+
+    a = 100;
+    b = 200;   // unsigned char는 0~255 범위 → 200 저장 가능
+
+    printf("Before SWAP ===\n");
+    printf("a: %u, b: %u\n", a, b);
+
+    swap(a, b);  // 값 복사 → 원본 a,b는 변하지 않음
+
+    printf("After SWAP ====\n");
+    printf("a: %u, b: %u\n", a, b);
+
+    return 0;
+}
+
+void swap(unsigned char x, unsigned char y)
+{
+    unsigned char temp;
+
+    temp = x;
+    x = y;
+    y = temp;
+
+    printf("After SWAP ====\n");
+    printf("x: %u, y: %u\n", x, y);
+}
+----------------------------------------------------------------------------------------------------
+
+*vim은 vi의 확장판이다.
+
