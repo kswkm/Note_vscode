@@ -1,0 +1,201 @@
+#콘솔 연결
+Console 케이블 선택
+PCA 클릭 → RS-232
+R1 클릭 → Console
+PCA → Desktop → Terminal
+OK → Enter
+→ R1 CLI에 접속됨
+
+
+a. Privileged EXEC 모드 진입
+Router> enable
+Router#
+
+b. running-config 확인
+Router# show running-config
+
+c. NVRAM(Startup-config) 확인
+Router# show startup-config
+
+→ 출력: startup-config is not present
+❓왜 startup-config가 없나요?
+아직 설정을 저장하지 않았기 때문
+running-config만 있고 저장된 설정(NVRAM)이 없음
+
+
+
+#암호 설정
+
+a. hostname 설정
+Router(config)# hostname R1
+
+b. MOTD 배너 설정
+R1(config)# banner motd #Unauthorized access is strictly prohibited.#
+
+c. 모든 평문 비밀번호 암호화
+R1(config)# service password-encryption
+
+d. 비밀번호 설정
+1) Privileged EXEC (enable secret)
+R1(config)# enable secret itsasecret
+
+2) Console 비밀번호
+R1(config)# line console 0
+R1(config-line)# password letmein
+R1(config-line)# login
+R1(config-line)# exit
+
+
+
+#암호 설정 확인
+
+R1>enable
+Password: 
+R1# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1#
+R1# wr
+Building configuration...
+[OK]
+R1# write
+Building configuration...
+[OK]
+R1#
+R1#show startup-config
+Using 852 bytes
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname R1
+!
+!
+!
+enable secret 5 $1$mERr$ILwq/b7kc.7X/ejA4Aosn0
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+no cdp run
+!
+banner motd ^CUnauthorized access is strictly prohibited.^C
+!
+!
+!
+!
+line con 0
+ password 7 082D495A041C0C19
+ login
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+
+R1#
+R1#
+R1#
+R1#
+R1#
+R1#
+R1#
+R1#
+R1#
+R1#
+R1#
+R1# show flash
+
+System flash directory:
+File  Length   Name/status
+  3   486899872isr4300-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
+  2   28282    sigdef-category.xml
+  1   227537   sigdef-default.xml
+[487155691 bytes used, 2761893909 available, 3249049600 total]
+3.17338e+06K bytes of processor board System flash (Read/Write)
+
+
+R1# copy startup-config flash
+Destination filename [startup-config]? 
+
+852 bytes copied in 0.416 secs (2048 bytes/sec)
+R1#
+R1#show flash
+
+System flash directory:
+File  Length   Name/status
+  3   486899872isr4300-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
+  2   28282    sigdef-category.xml
+  1   227537   sigdef-default.xml
+  4   852      startup-config
+[487156543 bytes used, 2761893057 available, 3249049600 total]
+3.17338e+06K bytes of processor board System flash (Read/Write)
+
+
+R1#
+
