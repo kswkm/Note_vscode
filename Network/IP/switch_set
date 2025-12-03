@@ -1,0 +1,131 @@
+#IP -> 192.168.1.254 set
+
+Switch>enable
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S2
+S2(config)#interface vlan 1
+S2(config-if)#ip address 192.168.1.254 255.255.255.0
+S2(config-if)#no shutdown
+
+S2(config-if)#
+%LINK-3-UPDOWN: Interface Vlan1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to up
+
+S2(config-if)#copy running-config startup-config
+              ^
+% Invalid input detected at '^' marker.
+	
+S2(config-if)#exit
+S2(config)#exit
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S2#^Z
+S2#
+S2# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S2#show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+FastEthernet0/1        unassigned      YES manual up                    up 
+FastEthernet0/2        unassigned      YES manual up                    up 
+FastEthernet0/3        unassigned      YES manual down                  down 
+FastEthernet0/4        unassigned      YES manual down                  down 
+FastEthernet0/5        unassigned      YES manual down                  down 
+FastEthernet0/6        unassigned      YES manual down                  down 
+FastEthernet0/7        unassigned      YES manual down                  down 
+FastEthernet0/8        unassigned      YES manual down                  down 
+FastEthernet0/9        unassigned      YES manual down                  down 
+FastEthernet0/10       unassigned      YES manual down                  down 
+FastEthernet0/11       unassigned      YES manual down                  down 
+FastEthernet0/12       unassigned      YES manual down                  down 
+FastEthernet0/13       unassigned      YES manual down                  down 
+FastEthernet0/14       unassigned      YES manual down                  down 
+FastEthernet0/15       unassigned      YES manual down                  down 
+FastEthernet0/16       unassigned      YES manual down                  down 
+FastEthernet0/17       unassigned      YES manual down                  down 
+FastEthernet0/18       unassigned      YES manual down                  down 
+FastEthernet0/19       unassigned      YES manual down                  down 
+FastEthernet0/20       unassigned      YES manual down                  down 
+FastEthernet0/21       unassigned      YES manual down                  down 
+FastEthernet0/22       unassigned      YES manual down                  down 
+FastEthernet0/23       unassigned      YES manual down                  down 
+FastEthernet0/24       unassigned      YES manual down                  down 
+GigabitEthernet0/1     unassigned      YES manual down                  down 
+GigabitEthernet0/2     unassigned      YES manual down                  down 
+Vlan1                  192.168.1.254   YES manual up                    up
+S2#
+S2#
+S2#
+S2# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S2#
+
+
+#check
+<pc1>
+C:\>ping 192.168.1.253
+
+Pinging 192.168.1.253 with 32 bytes of data:
+
+Request timed out.
+Reply from 192.168.1.253: bytes=32 time<1ms TTL=255
+Reply from 192.168.1.253: bytes=32 time<1ms TTL=255
+Reply from 192.168.1.253: bytes=32 time<1ms TTL=255
+
+Ping statistics for 192.168.1.253:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+C:\>ping 192.168.1.2
+
+Pinging 192.168.1.2 with 32 bytes of data:
+
+Reply from 192.168.1.2: bytes=32 time=17ms TTL=128
+Reply from 192.168.1.2: bytes=32 time<1ms TTL=128
+Reply from 192.168.1.2: bytes=32 time<1ms TTL=128
+Reply from 192.168.1.2: bytes=32 time<1ms TTL=128
+
+Ping statistics for 192.168.1.2:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 17ms, Average = 4ms
+
+
+<pc2>
+C:\>ping 192.168.1.253
+
+Pinging 192.168.1.253 with 32 bytes of data:
+
+Request timed out.
+Reply from 192.168.1.253: bytes=32 time<1ms TTL=255
+Reply from 192.168.1.253: bytes=32 time<1ms TTL=255
+Reply from 192.168.1.253: bytes=32 time<1ms TTL=255
+
+Ping statistics for 192.168.1.253:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+C:\>
+
+Pinging 192.168.1.1 with 32 bytes of data:
+
+Reply from 192.168.1.1: bytes=32 time<1ms TTL=128
+Reply from 192.168.1.1: bytes=32 time<1ms TTL=128
+Reply from 192.168.1.1: bytes=32 time<1ms TTL=128
+Reply from 192.168.1.1: bytes=32 time=1ms TTL=128
+
+Ping statistics for 192.168.1.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 1ms, Average = 0ms
+
+
+    
