@@ -1,0 +1,284 @@
+#통신 암호화 (SSH 구성)
+
+1. 도메인 이름 설정
+2. RSA 키 생성
+3. SSH 사용자 생성
+4. VTY 라인에서 Telnet 금지 + SSH만 허용
+
+
+#실행 과정
+
+Password: 
+S1> en
+Password: 
+S1# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S1#
+S1#show running-config
+Building configuration...
+
+Current configuration : 1150 bytes
+!
+version 15.0
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname S1
+!
+!
+enable password cisco
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface FastEthernet0/1
+!
+interface FastEthernet0/2
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+!
+interface FastEthernet0/24
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ ip address 10.10.10.2 255.255.255.0
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line vty 0 4
+ password cisco
+ login
+line vty 5 15
+ password cisco
+ login
+!
+!
+!
+!
+end
+
+
+S1#
+S1#
+S1#
+S1#
+S1#
+S1#
+S1# conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)# service password-encryption
+S1(config)# ^Z
+S1# show running-config
+Building configuration...
+
+Current configuration : 1174 bytes
+!
+version 15.0
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname S1
+!
+!
+enable password 7 0822455D0A16
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface FastEthernet0/1
+!
+interface FastEthernet0/2
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+!
+interface FastEthernet0/24
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ ip address 10.10.10.2 255.255.255.0
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line vty 0 4
+ password 7 0822455D0A16
+ login
+line vty 5 15
+ password 7 0822455D0A16
+ login
+!
+!
+!
+!
+end
+
+
+S1#
+S1#
+S1#
+S1#
+S1#
+S1#
+S1#
+S1#
+S1# conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)# ip domain-name netacad.pka
+S1(config)# crypto key generate rsa
+The name for the keys will be: S1.netacad.pka
+Choose the size of the key modulus in the range of 360 to 4096 for your
+  General Purpose Keys. Choosing a key modulus greater than 512 may take
+  a few minutes.
+
+How many bits in the modulus [512]: 1024
+% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]
+
+S1(config)# username administrator secret cisco
+*Mar 1 16:19:27.142: %SSH-5-ENABLED: SSH 1.99 has been enabled
+S1(config)# line vty 0 15
+S1(config-line)# login local
+S1(config-line)# transport input ssh
+S1(config-line)# no password cisco
+
+
+
+🚩 이 설정으로 인해
+-> VTY는 이제 로컬 계정(administrator)으로 로그인
+-> SSH만 허용, Telnet은 차단됨
+
+SSH 작동 확인 (Verify SSH Implementation)
+#Telnet 로그아웃 후 재접속 시도
+
+S1# exit
+
+[Connection to 10.10.10.2 closed by foreign host]
+C:\> telnet 10.10.10.2
+Trying 10.10.10.2 ...Open
+
+[Connection to 10.10.10.2 closed by foreign host]
+
+
+#SSH 접속 시도
+C:\>ssh
+Cisco Packet Tracer PC SSH
+
+Usage: SSH -l username target
+
+C:\>ssh -l administrator 10.10.10.2
+Password: 
+
+S1> enable
+Password: 
+S1# 
+
+= SSH 접속 성공!
+
