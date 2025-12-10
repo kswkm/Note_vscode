@@ -1,0 +1,5 @@
+🌐 ICMP (Internet Control Message Protocol)란?
+ICMP는 **인터넷 제어 메시지 프로토콜(Internet Control Message Protocol)**의 약자입니다.
+이는 네트워크 계층(OSI 모델의 3계층)에서 작동하는 프로토콜로, 주로 라우터나 호스트 같은 네트워크 장치들이 네트워크 통신에 관한 오류 메시지나 운영 정보를 교환하기 위해 사용됩니다.
+ICMP는 데이터를 전송하는 프로토콜(예: TCP, UDP)이 아니라, 네트워크의 상태를 진단하고 오류를 보고하는 역할을 합니다.
+
