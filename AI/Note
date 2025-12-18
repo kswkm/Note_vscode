@@ -12,3 +12,15 @@ Lable: 모델이 학습을 통해 맞혀야 하는 정답 데이터이다.
 
 혼돈 행렬(Confusion Matrix) 은
 👉 “모델이 어디서 어떻게 틀리는지 한눈에 보는 표” 야.
+예측값과 실제값을 교차해서 정리한 표
+모델 성능을 정확도 하나로만 보지 않기 위해 사용해.
+
+#손실함수: 모델의 예측값과 실제값의 차이를 수치로 나타내는 함수.
+-이진 분류: binary_crossentropy
+-다중 분류: categorical_crossentropy
+-회귀: mean_squared_error
+
+Epoch	전체 데이터 1회 학습
+Batch	한 번에 처리하는 데이터 묶음
+Iteration	배치 1번 처리
+
